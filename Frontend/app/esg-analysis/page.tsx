@@ -322,6 +322,11 @@ const fetchRecommendations = async (supplier_name: string) => {
         .map((sentence:string) => ` ${sentence}`);
     }
 
+   if (typeof window !== "undefined" && window.localStorage) {
+  localStorage.setItem("optimization", JSON.stringify(rawText));
+}
+
+
     setRecommendations(points.length ? points : ["No recommendations received."]);
   } catch (err) {
     setRecommendations(["Error fetching recommendations."]);

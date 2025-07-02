@@ -163,6 +163,13 @@ export default function DataSubmissionPage() {
     console.log("ESG scores calculated:", data);
      if (typeof window !== "undefined" && window.localStorage) {
       localStorage.setItem("esg_category_scores", JSON.stringify(data));
+
+       if (data.final_subfactor_scores) {
+        localStorage.setItem(
+          "esg_final_subfactor_scores",
+          JSON.stringify(data.final_subfactor_scores)
+        );
+      }
     }
     setIsSubmitted(true); 
     return data;
