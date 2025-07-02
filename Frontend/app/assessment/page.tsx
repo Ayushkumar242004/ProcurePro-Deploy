@@ -205,7 +205,8 @@ export default function AssessmentPage() {
 
 
 
-  useEffect(() => {
+useEffect(() => {
+  if (typeof window !== "undefined") {
     const interval = setInterval(() => {
       const rawData = localStorage.getItem("esg_final_subfactor_scores");
       if (!rawData) return;
@@ -226,7 +227,6 @@ export default function AssessmentPage() {
 
         // 👥 Social
         if (data.Social) {
-
           setRetentionScore(data.Social["Retention Score"] ?? "");
           setSafetyScore(data.Social["Safety Score"] ?? "");
           setDiversityScore(data.Social["Diversity Score"] ?? "");
@@ -255,7 +255,9 @@ export default function AssessmentPage() {
     }, 1000); // check every 1 second
 
     return () => clearInterval(interval); // cleanup on unmount
-  }, []);
+  }
+}, []);
+
 
   const handleAiAnalyzeE = async (factor: string) => {
     setIsAiLoading(true);

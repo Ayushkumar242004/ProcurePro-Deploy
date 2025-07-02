@@ -10,16 +10,19 @@ export default function LogoutPage() {
   const router = useRouter()
 
   useEffect(() => {
+  if (typeof window !== "undefined") {
     // Clear user data from localStorage
-    localStorage.removeItem("userData")
+    localStorage.removeItem("userData");
+  }
 
-    // Redirect to registration after 3 seconds
-    const timer = setTimeout(() => {
-      router.push("/auth")
-    }, 3000)
+  // Redirect to registration after 3 seconds
+  const timer = setTimeout(() => {
+    router.push("/auth");
+  }, 3000);
 
-    return () => clearTimeout(timer)
-  }, [router])
+  return () => clearTimeout(timer);
+}, [router]);
+
 
   return (
     <div className="relative pt-20 min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">

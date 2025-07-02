@@ -445,12 +445,15 @@ export default function Dashboard() {
   const { userData, isAuthenticated } = useAuth()
 
   useEffect(() => {
-    const userData = localStorage.getItem("userData")
+  if (typeof window !== "undefined") {
+    const userData = localStorage.getItem("userData");
     if (userData) {
-      const user = JSON.parse(userData)
-      setUserRole(user.role)
+      const user = JSON.parse(userData);
+      setUserRole(user.role);
     }
-  }, [])
+  }
+}, []);
+
 
   const selectedPersonaData = personas.find((p) => p.id === selectedPersona)
 

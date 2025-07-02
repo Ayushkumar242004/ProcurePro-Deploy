@@ -106,19 +106,23 @@ export default function UserGuidance({ userRole, userName }: UserGuidanceProps) 
 
   const IconComponent = guidance.icon
 
-  const handleNext = () => {
-    // Mark guidance as completed in localStorage with user-specific key
-    const userEmail = localStorage.getItem("userData") ? JSON.parse(localStorage.getItem("userData")!).email : "unknown"
-    localStorage.setItem(`guidance_completed_${userEmail}_${userRole}`, "true")
-    router.push(guidance.redirectPath)
+const handleNext = () => {
+  if (typeof window !== "undefined") {
+    const userData = localStorage.getItem("userData");
+    const userEmail = userData ? JSON.parse(userData).email : "unknown";
+    localStorage.setItem(`guidance_completed_${userEmail}_${userRole}`, "true");
   }
+  router.push(guidance.redirectPath);
+};
 
-  const handleSkip = () => {
-    // Mark guidance as completed when skipped
-    const userEmail = localStorage.getItem("userData") ? JSON.parse(localStorage.getItem("userData")!).email : "unknown"
-    localStorage.setItem(`guidance_completed_${userEmail}_${userRole}`, "true")
-    router.push("/")
+const handleSkip = () => {
+  if (typeof window !== "undefined") {
+    const userData = localStorage.getItem("userData");
+    const userEmail = userData ? JSON.parse(userData).email : "unknown";
+    localStorage.setItem(`guidance_completed_${userEmail}_${userRole}`, "true");
   }
+  router.push("/");
+};
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-green-50/90 to-blue-50/90 dark:from-gray-900/90 dark:to-gray-800/90 backdrop-blur-sm p-4">

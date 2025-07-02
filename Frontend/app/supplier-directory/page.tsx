@@ -104,42 +104,44 @@ export default function SupplierDirectory() {
     }>({});
     const [overallScore, setOverallScore] = useState(0);
   
-    const handleShowOverallScore = async () => {
-      const esgCategoryRaw = localStorage.getItem("esg_category_scores");
-      const remainingRaw = localStorage.getItem("remainingScores");
-      const overall_score = localStorage.getItem("overallScore");
-      setOverallScore(overall_score ? parseFloat(overall_score) : 0);
-      if (!esgCategoryRaw ) {
-     
-        return;
-      }
-  
-      try {
-        const parsedESG = JSON.parse(esgCategoryRaw);
-      
-        const { E_score, S_score, G_score, ESG_score } = parsedESG;
-  
-      
-         const remainingScores: any = {
-  Cost_Efficiency: 50,
-  Risk_Score: 65,
-  Reliability_Score: 70
+   const handleShowOverallScore = async () => {
+  if (typeof window !== "undefined") {
+    const esgCategoryRaw = localStorage.getItem("esg_category_scores");
+    const remainingRaw = localStorage.getItem("remainingScores");
+    const overall_score = localStorage.getItem("overallScore");
+
+    setOverallScore(overall_score ? parseFloat(overall_score) : 0);
+
+    if (!esgCategoryRaw) {
+      return;
+    }
+
+    try {
+      const parsedESG = JSON.parse(esgCategoryRaw);
+      const { E_score, S_score, G_score, ESG_score } = parsedESG;
+
+      // You can replace this with parsed remainingRaw if needed
+      const remainingScores: any = {
+        Cost_Efficiency: 50,
+        Risk_Score: 65,
+        Reliability_Score: 70
+      };
+
+      setAllScores({
+        E_score,
+        S_score,
+        G_score,
+        ESG_score,
+        ...remainingScores,
+      });
+
+    } catch (e) {
+      console.error("Error parsing localStorage data:", e);
+      alert("Failed to load score data.");
+    }
+  }
 };
-  
-        setAllScores({
-          E_score,
-          S_score,
-          G_score,
-          ESG_score,
-          ...remainingScores,
-        });
-  
-        
-      } catch (e) {
-        console.error("Error parsing localStorage data:", e);
-        alert("Failed to load score data.");
-      }
-    };
+
   
    useEffect(() => {
     handleShowOverallScore();

@@ -81,23 +81,23 @@ export default function TradeOffSimulator() {
     const esgCategoryRaw = localStorage.getItem("esg_category_scores");
     const remainingRaw = localStorage.getItem("remainingScores");
 
-    if (!esgCategoryRaw ) {
-      
+    if (!esgCategoryRaw) {
+
       return;
     }
 
     try {
       const parsedESG = JSON.parse(esgCategoryRaw);
-    
+
       const { E_score, S_score, G_score, ESG_score } = parsedESG;
 
-     
-       
-    const remainingScores: any = {
-  Cost_Efficiency: 50,
-  Risk_Score: 65,
-  Reliability_Score: 70
-};
+
+
+      const remainingScores: any = {
+        Cost_Efficiency: 50,
+        Risk_Score: 65,
+        Reliability_Score: 70
+      };
 
 
       setAllScores({
@@ -295,7 +295,9 @@ export default function TradeOffSimulator() {
       totalWeight;
 
     setOverallScore(weightedSum);
+     if (typeof window !== "undefined") {
     localStorage.setItem("overallScore", JSON.stringify(weightedSum));
+     }
   }, [
     allScores,
     costWeight,
@@ -347,7 +349,7 @@ export default function TradeOffSimulator() {
                       />
                     </div>
 
-                  
+
 
                     <div className="space-y-2">
                       <div className="flex justify-between">
@@ -377,7 +379,7 @@ export default function TradeOffSimulator() {
                       />
                     </div>
 
-                      <div className="space-y-2">
+                    <div className="space-y-2">
                       <div className="flex justify-between">
                         <label className="text-sm font-medium">Sustainability</label>
                         <span className="text-sm text-muted-foreground">{sustainabilityWeight}%</span>
@@ -428,7 +430,7 @@ export default function TradeOffSimulator() {
                   >
                     Cost Focused
                   </Button>
-               
+
                   <Button
                     variant="outline"
                     className="w-full justify-start"
@@ -454,7 +456,7 @@ export default function TradeOffSimulator() {
                   >
                     Reliability Focused
                   </Button>
-                     <Button
+                  <Button
                     variant="outline"
                     className="w-full justify-start"
                     onClick={() => {

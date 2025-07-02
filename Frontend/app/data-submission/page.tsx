@@ -24,7 +24,11 @@ const sections = [
   { id: "documents", title: "Documents", icon: FileText, description: "Supporting documentation" }
 ]
 
-const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+const userData =
+  typeof window !== "undefined"
+    ? JSON.parse(localStorage.getItem("userData") || "{}")
+    : {};
+
 const email = userData.email;
 
 export default function DataSubmissionPage() {
@@ -168,7 +172,7 @@ export default function DataSubmissionPage() {
   };
 
   // <---- Handles file uploads ---->
-  const handleFileUpload = async (key: string, file: File) => {
+ const handleFileUpload = async (key: string, file: File) => {
   try {
     setIsLoading(true);
     setUploadedFiles((prev) => ({ ...prev, [key]: file }));
@@ -177,18 +181,25 @@ export default function DataSubmissionPage() {
     const formData = new FormData();
     formData.append("file", file);
 
-    // Get email from localStorage (or any other auth provider)
-    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-    const email = userData.email || "";
+    // Safely get email from localStorage (client only)
+    let email = "";
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("userData");
+      const userData = stored ? JSON.parse(stored) : {};
+      email = userData.email || "";
+    }
     formData.append("email", email);
 
     console.log("Uploading file:", file.name);
 
     setUploadProgress(30);
-    const response = await fetch("https://procurepro-x4li.onrender.com/api/submit-esg-report", {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      "https://procurepro-x4li.onrender.com/api/submit-esg-report",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     if (!response.ok) {
       const error = await response.json();
@@ -196,20 +207,20 @@ export default function DataSubmissionPage() {
     }
 
     const data = await response.json();
-    updateFormFields( data.result)
+    updateFormFields(data.result);
     setUploadProgress(50);
     console.log("Upload and extraction successful:", data);
 
-    // Optionally: you can store result in state or trigger a re-fetch of prefill
-    setHasdata( true ); 
+    // Optionally store result in state or trigger re-fetch
+    setHasdata(true);
 
-    // calling function to 
+    // Call final submit
     try {
       await handleFinalESGSubmit();
       setUploadProgress(100);
     } catch (err) {
-    console.error("Final submission failed (non-blocking):", err);
-    } 
+      console.error("Final submission failed (non-blocking):", err);
+    }
 
     setUploadProgress(100);
     setIsLoading(false);
@@ -219,7 +230,8 @@ export default function DataSubmissionPage() {
     console.error("Upload error:", err);
     alert("Failed to upload ESG report. Please try again.");
   }
-  };
+};
+
   
   //<----- -------->
   const [formData, setFormData] = useState({

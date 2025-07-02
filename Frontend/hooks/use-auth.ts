@@ -41,54 +41,64 @@ export function useAuth() {
   const [loading, setLoading] = useState(true) // Start with loading true
   const router = useRouter()
 
-  const checkAuthStatus = () => {
+ const checkAuthStatus = () => {
+  if (typeof window !== "undefined") {
     try {
-      const token = localStorage.getItem("token")
-      const storedUserData = localStorage.getItem("userData")
-      
-      console.log("useAuth: Checking auth status - token:", !!token, "userData:", !!storedUserData)
-      
+      const token = localStorage.getItem("token");
+      const storedUserData = localStorage.getItem("userData");
+
+      console.log("useAuth: Checking auth status - token:", !!token, "userData:", !!storedUserData);
+
       if (token && storedUserData) {
-        const user = JSON.parse(storedUserData)
-        console.log("useAuth: Setting user data:", user)
-        setUserData(user)
-        setIsAuthenticated(true)
+        const user = JSON.parse(storedUserData);
+        console.log("useAuth: Setting user data:", user);
+        setUserData(user);
+        setIsAuthenticated(true);
       } else {
-        console.log("useAuth: No auth data found")
-        setUserData(null)
-        setIsAuthenticated(false)
+        console.log("useAuth: No auth data found");
+        setUserData(null);
+        setIsAuthenticated(false);
       }
     } catch (error) {
-      console.error("useAuth: Error checking auth status:", error)
-      setUserData(null)
-      setIsAuthenticated(false)
+      console.error("useAuth: Error checking auth status:", error);
+      setUserData(null);
+      setIsAuthenticated(false);
     } finally {
-      setLoading(false) // Always set loading to false when done
+      setLoading(false); // Always set loading to false when done
     }
+  } else {
+    // If running SSR, immediately set loading to false
+    setLoading(false);
   }
+};
 
-  const logout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("userData")
+const logout = () => {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userData");
     // Clear guidance completion flags
     Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('guidance_completed_')) {
-        localStorage.removeItem(key)
+      if (key.startsWith("guidance_completed_")) {
+        localStorage.removeItem(key);
       }
-    })
-    setUserData(null)
-    setIsAuthenticated(false)
-    router.push("/auth")
+    });
   }
 
-  const updateUserData = (newUserData: any) => {
-    console.log("useAuth: Updating user data:", newUserData)
-    setUserData(newUserData)
-    setIsAuthenticated(!!newUserData)
-    if (newUserData) {
-      localStorage.setItem("userData", JSON.stringify(newUserData))
-    }
+  setUserData(null);
+  setIsAuthenticated(false);
+  router.push("/auth");
+};
+
+const updateUserData = (newUserData: any) => {
+  console.log("useAuth: Updating user data:", newUserData);
+  setUserData(newUserData);
+  setIsAuthenticated(!!newUserData);
+
+  if (typeof window !== "undefined" && newUserData) {
+    localStorage.setItem("userData", JSON.stringify(newUserData));
   }
+};
+
 
   useEffect(() => {
     checkAuthStatus()

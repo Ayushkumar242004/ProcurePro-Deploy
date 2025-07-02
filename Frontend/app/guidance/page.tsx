@@ -79,37 +79,52 @@ export default function GuidancePage() {
   const { userData, isAuthenticated, loading } = useAuth() // Make sure to get loading from useAuth
   const router = useRouter()
 
-  useEffect(() => {
-    console.log("Guidance page: useEffect triggered")
-    console.log("Guidance page: loading:", loading, "isAuthenticated:", isAuthenticated, "userData:", userData)
-    
-    // Wait for auth hook to finish loading
-    if (loading) {
-      console.log("Auth still loading, waiting...")
-      return
-    }
+useEffect(() => {
+  console.log("Guidance page: useEffect triggered");
+  console.log(
+    "Guidance page: loading:",
+    loading,
+    "isAuthenticated:",
+    isAuthenticated,
+    "userData:",
+    userData
+  );
 
-    // Now we can safely check authentication
-    if (!isAuthenticated || !userData) {
-      console.log("Guidance page: Not authenticated, redirecting to auth")
-      router.push("/auth")
-      return
-    }
+  // Wait for auth hook to finish loading
+  if (loading) {
+    console.log("Auth still loading, waiting...");
+    return;
+  }
 
-    // Check if guidance was already completed for this specific user
-    const guidanceKey = `guidance_completed_${userData.email}_${userData.role}`
-    const guidanceCompleted = localStorage.getItem(guidanceKey)
-    console.log("Guidance page: Checking completion:", guidanceKey, "Result:", guidanceCompleted)
-    
+  // Now we can safely check authentication
+  if (!isAuthenticated || !userData) {
+    console.log("Guidance page: Not authenticated, redirecting to auth");
+    router.push("/auth");
+    return;
+  }
+
+  // Check if running in the browser before accessing localStorage
+  if (typeof window !== "undefined") {
+    const guidanceKey = `guidance_completed_${userData.email}_${userData.role}`;
+
+    const guidanceCompleted = localStorage.getItem(guidanceKey);
+    console.log(
+      "Guidance page: Checking completion:",
+      guidanceKey,
+      "Result:",
+      guidanceCompleted
+    );
+
     if (guidanceCompleted === "true") {
-      console.log("Guidance page: Already completed, redirecting to home")
-      router.push("/")
-      return
+      console.log("Guidance page: Already completed, redirecting to home");
+      router.push("/");
+      return;
     }
+  }
 
-    // All checks passed, show the guidance page
-    setPageLoading(false)
-  }, [loading, isAuthenticated, userData, router]) // Add loading to dependencies
+  // All checks passed, show the guidance page
+  setPageLoading(false);
+}, [loading, isAuthenticated, userData, router]);
 
   const getUserSteps = () => {
     if (!userData?.role) return []
@@ -119,9 +134,11 @@ export default function GuidancePage() {
   const handleGetStarted = () => {
     if (userData) {
       const guidanceKey = `guidance_completed_${userData.email}_${userData.role}`
+      if (typeof window !== "undefined") {
       localStorage.setItem(guidanceKey, "true")
       console.log("Marking guidance as completed:", guidanceKey)
-      
+      }
+
       // Redirect based on role
       const redirectPaths = {
         "Procurement Analyst": "/data-submission",
@@ -136,14 +153,18 @@ export default function GuidancePage() {
     }
   }
 
-  const handleSkip = () => {
-    if (userData) {
-      const guidanceKey = `guidance_completed_${userData.email}_${userData.role}`
-      localStorage.setItem(guidanceKey, "true")
-      console.log("Skipping guidance, marking as completed:", guidanceKey)
-      router.push("/")
+ const handleSkip = () => {
+  if (userData) {
+    const guidanceKey = `guidance_completed_${userData.email}_${userData.role}`;
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem(guidanceKey, "true");
+      console.log("Skipping guidance, marking as completed:", guidanceKey);
     }
+
+    router.push("/");
   }
+};
 
   // Show loading while auth is loading or page is loading
   if (loading || pageLoading) {

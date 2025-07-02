@@ -16,31 +16,35 @@ export default function EmployeeLogin() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login/employee`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      })
+ const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login/employee`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.detail || "Login failed")
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Login failed");
 
-      toast.success("Logged in successfully!")
-      localStorage.setItem("token", data.token) 
-        // user object contains email and role 
-        localStorage.setItem("userData", JSON.stringify(data.user))
-        router.push("/guidance") 
-      // Redirect logic can go here
-    } catch (err: any) {
-      toast.error(err.message)
-    } finally {
-      setLoading(false)
+    toast.success("Logged in successfully!");
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("token", data.token);
+      // user object contains email and role
+      localStorage.setItem("userData", JSON.stringify(data.user));
     }
+
+    router.push("/guidance"); 
+  } catch (err: any) {
+    toast.error(err.message);
+  } finally {
+    setLoading(false);
   }
+};
+
 
   return (
     <form onSubmit={handleLogin} className="space-y-4">

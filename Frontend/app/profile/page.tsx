@@ -52,73 +52,83 @@ export default function ProfilePage() {
     return () => clearTimeout(timer)
   }, [isAuthenticated, userData, router])
 
-  const fetchProfile = async () => {
+ const fetchProfile = async () => {
+  if (typeof window !== "undefined") {
     try {
-      const token = localStorage.getItem("token")
-      if (!token) return
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile/me`, {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         }
-      })
+      });
 
       if (response.ok) {
-        const data = await response.json()
-        setCurrentProfile(data.data)
+        const data = await response.json();
+        setCurrentProfile(data.data);
         setFormData({
           email: data.data.email,
           role: data.data.role
-        })
+        });
       }
     } catch (error) {
-      console.error("Error fetching profile:", error)
+      console.error("Error fetching profile:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
+};
+
 
   const handleSave = async () => {
-    setSaving(true)
-    try {
-      const token = localStorage.getItem("token")
-      if (!token) {
-        throw new Error("No authentication token found")
-      }
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile/update`, {
-        method: "PATCH",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      })
-
-      const responseData = await response.json()
-
-      if (!response.ok) {
-        throw new Error(responseData.detail || `HTTP ${response.status}: Failed to update profile`)
-      }
-
-      // Update localStorage with new data
-      const updatedUserData = { ...userData, ...formData }
-      localStorage.setItem("userData", JSON.stringify(updatedUserData))
-
-      // Update current profile state
-      setCurrentProfile(prev => ({ ...prev, ...formData }))
-      
-      toast.success("Profile updated successfully!")
-      setEditing(false)
-      
-    } catch (error) {
-      console.error("Error updating profile:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to update profile")
-    } finally {
-      setSaving(false)
+  setSaving(true);
+  try {
+    let token;
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("token");
     }
+
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile/update`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(responseData.detail || `HTTP ${response.status}: Failed to update profile`);
+    }
+
+    // Update localStorage with new data
+    if (typeof window !== "undefined") {
+      const updatedUserData = { ...userData, ...formData };
+      localStorage.setItem("userData", JSON.stringify(updatedUserData));
+    }
+
+    // Update current profile state
+    setCurrentProfile(prev => ({ ...prev, ...formData }));
+    
+    toast.success("Profile updated successfully!");
+    setEditing(false);
+
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    toast.error(error instanceof Error ? error.message : "Failed to update profile");
+  } finally {
+    setSaving(false);
   }
+};
+
 
   const handleCancel = () => {
     setFormData({
