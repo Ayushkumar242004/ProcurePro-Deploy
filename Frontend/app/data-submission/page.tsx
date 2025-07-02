@@ -152,7 +152,7 @@ export default function DataSubmissionPage() {
     },
     body: JSON.stringify({ email }), // Send as JSON
     });
-
+    
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.detail || "Failed to calculate ESG score");
@@ -161,6 +161,9 @@ export default function DataSubmissionPage() {
     const data = await response.json();
     
     console.log("ESG scores calculated:", data);
+     if (typeof window !== "undefined" && window.localStorage) {
+      localStorage.setItem("esg_category_scores", JSON.stringify(data));
+    }
     setIsSubmitted(true); 
     return data;
   } catch (err: any) {

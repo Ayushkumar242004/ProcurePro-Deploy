@@ -622,7 +622,6 @@ useEffect(() => {
 
   const handleShowOverallScore = async () => {
     const esgCategoryRaw = localStorage.getItem("esg_category_scores");
-    
     if (!esgCategoryRaw ) {
      
       return;
