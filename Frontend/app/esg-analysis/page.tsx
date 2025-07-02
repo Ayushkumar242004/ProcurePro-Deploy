@@ -283,7 +283,7 @@ const fetchRecommendations = async (supplier_name: string) => {
     const esgScores = supplier?.esg_subfactor_scores || 
                      JSON.parse(supplier?.esg_subfactor_scores || "{}");
     
-    const response = await fetch("http://localhost:8000/api/gemini-recommendations-esgScore", {
+    const response = await fetch("https://procurepro-x4li.onrender.com/api/gemini-recommendations-esgScore", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -351,7 +351,7 @@ const fetchRecommendations = async (supplier_name: string) => {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   useEffect(() => {
     const fetchSuppliers = async () => {
-      const res = await fetch("http://localhost:8000/api/suppliers");
+      const res = await fetch("https://procurepro-x4li.onrender.com/api/suppliers");
       const data = await res.json();
       console.log("Fetched suppliers:", data.suppliers);
       setSuppliers(data.suppliers);
@@ -542,10 +542,14 @@ const fetchRecommendations = async (supplier_name: string) => {
           transition={{ duration: 0.5 }}
           className="text-center space-y-4"
         >
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent animate-gradient">
-            ESG Factor Analysis & Supplier Ranking
-          </h1>
-          <p className="text-xl text-muted-foreground">
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-2 font-['Inter','IBM Plex Sans',sans-serif]">
+          ESG Factor Analysis {" "}
+          <span className="bg-gradient-to-r from-[#E2142D] via-[#2563eb] to-[#a21caf] bg-clip-text text-transparent animate-gradient-text">
+            & Supplier Ranking
+          </span>
+        </h2>
+         
+          <p className="text-md text-muted-foreground">
             Comprehensive Environmental, Social & Governance evaluation with intelligent supplier recommendations
           </p>
         </motion.div>
@@ -609,11 +613,7 @@ const fetchRecommendations = async (supplier_name: string) => {
               <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
                 <CardHeader>
                   <CardTitle>Overall ESG Score</CardTitle>
-                  <CardDescription>
-                    {selectedSupplier 
-                      ? `For ${selectedSupplier.company_name}` 
-                      : "Select a supplier to view score"}
-                  </CardDescription>
+
                 </CardHeader>
                 <CardContent>
                   <div className="text-center space-y-4">
@@ -656,7 +656,7 @@ const fetchRecommendations = async (supplier_name: string) => {
 
               <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
                 <CardHeader>
-                  <CardTitle>ESG Breakdown</CardTitle>
+                  <CardTitle>Score Breakdown</CardTitle>
                   <CardDescription>Score distribution across pillars</CardDescription>
                 </CardHeader>
                 <CardContent>
