@@ -1,0 +1,39 @@
+# === BACKEND (Python) ===
+Backend/venv/
+Backend/app/__pycache__/
+Backend/app/*.pyc
+Backend/.env
+
+# Ignore all __pycache__ and .pyc files project-wide
+__pycache__/
+*.pyc
+
+# === FRONTEND (Node.js) ===
+# Ignore node_modules everywhere
+**/node_modules/
+# Ignore npm/yarn/pnpm logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Ignore .env files in frontend
+Frontend/.env
+Frontend/.env.*
+
+# === OS generated files ===
+.DS_Store
+Thumbs.db
+
+# === IDE / Editor folders ===
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# === Other common ignores ===
+.env
+.env.*
+*.log
+*.bak
+*.swp
